@@ -4,9 +4,9 @@ from rest_framework.routers import DefaultRouter, SimpleRouter
 from apps import views
 
 router = DefaultRouter()
-router.register(r'languages', views.LanguageViewSet)
-router.register(r'genres', views.GenreViewSet)
-router.register(r'authors', views.AuthorViewSet)
+router.register(r'languages', views.LanguageViewSet, basename='language')
+router.register(r'genres', views.GenreViewSet, basename='genre')
+router.register(r'authors', views.AuthorViewSet, basename='author')
 #router.register(r'books', views.BookList.as_view())
 
 urlpatterns = [

@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from apps.models import Author, Book, Language, Genre
 from collections import OrderedDict
+from rest_framework.validators import UniqueValidator
 
 class LanguageSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
@@ -32,24 +33,31 @@ class RelatedGenreSerializer(serializers.ModelSerializer):
         }
 
 
-class RelatedLanguageSerializer(serializers.Serializer):
+class RelatedLanguageSerializer(serializers.ModelSerializer):
     class Meta:
         model = Language
         fields = ['name', 'url']
-
+        extra_kwargs = {
+            'name': {'validators': []},
+        }
 
 class BookSerializer(serializers.HyperlinkedModelSerializer):
     genre = RelatedGenreSerializer(many=True)
+    language = RelatedLanguageSerializer(many=False)
 
     class Meta:
         model = Book
         fields = ['id', 'title', 'price', 'summary', 'author', 'genre', 'language', 'isbn']
 
     def create(self, validated_data):
-        #author_data = validated_data.pop('author')
-        #author = Author.objects.get(first_name=author_data.get('first_name'),last_name=author_data.get('last_name'))
+        language_data = validated_data.pop('language')
+        language_name = None
+        for key, value in language_data.items():
+            language_name = value
+
+        language = Language.objects.get_or_create(name=language_name)
         genres_data = validated_data.pop('genre', None)
-        book = Book.objects.create(**validated_data)
+        book = Book.objects.create(language=language[0], **validated_data)
         for genre_data in genres_data:
             genre = Genre.objects.get_or_create(name=genre_data['name'])
             book.genre.add(genre[0])

@@ -14,7 +14,8 @@ class Author(models.Model):
         return self.first_name + " " +self.last_name
 
 class Language(models.Model):
-    name = models.CharField(verbose_name="name", unique=True, max_length=255, help_text="Languages. eg: English")
+    name = models.CharField(verbose_name="name", unique=True, max_length=255, null=False, blank=False,
+                            help_text="Languages. eg: English")
 
     class Meta:
         db_table = 'languages'
@@ -25,7 +26,8 @@ class Language(models.Model):
 
 
 class Genre(models.Model):
-    name = models.CharField(verbose_name="name", unique=True, max_length=255, help_text="Book Genre")
+    name = models.CharField(verbose_name="name", unique=True, max_length=255, null=False, blank=False,
+                            help_text="Book Genre")
 
     class Meta:
         db_table = 'genres'
